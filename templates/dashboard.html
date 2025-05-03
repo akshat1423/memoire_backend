@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #4f46e5;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        a, button {
+            background: #10b981;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+        button {
+            background: #ef4444;
+        }
+        button:hover, a:hover {
+            opacity: 0.9;
+        }
+        form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mem0 Users</h1>
+    <table>
+        <tr>
+            <th>User ID</th>
+            <th>Memory Count</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.memory_count }}</td>
+            <td>
+                <a href="/user/{{ user.id }}">View</a>
+                <form method="post" action="/delete-user/{{ user.id }}">
+                    <button type="submit">Delete All</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
