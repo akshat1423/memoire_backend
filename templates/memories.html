@@ -1,243 +1,103 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Memories for {{ user_id }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f9fafc;
-            margin: 0;
-            padding: 40px;
-            color: #222;
-        }
+{% extends "base.html" %}
 
-        h1 {
-            color: #1d1d1d;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Memories for {{ user_id }}</h2>
+        <div class="btn-group">
+            <a href="{{ url_for('search_memories') }}?user_id={{ user_id }}" class="btn btn-outline-primary">
+                <i class="fas fa-search"></i> Search Memories
+            </a>
+            <a href="{{ url_for('batch_operations') }}" class="btn btn-outline-primary">
+                <i class="fas fa-tasks"></i> Batch Operations
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
 
-        a {
-            color: #5b7cfa;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .memory-actions form {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .memory-actions input[type="text"] {
-            flex: 1;
-            padding: 10px 14px;
-            font-size: 1rem;
-            border: 1px solid #d0d7e2;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .memory-actions button {
-            padding: 10px 18px;
-            background: #5b7cfa;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .memory-actions button:hover {
-            background: #3f5bdd;
-        }
-
-        .memory-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease;
-        }
-
-        .memory-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .memory-card p {
-            margin: 0 0 12px;
-            font-size: 1.1rem;
-        }
-
-        .metadata span {
-            display: block;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .memory-card form {
-            margin-top: 10px;
-        }
-
-        .memory-card form button {
-            background: #ff5c5c;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .memory-card form button:hover {
-            background: #e04444;
-        }
-
-        .pagination {
-            margin-top: 30px;
-            font-size: 0.95rem;
-        }
-
-        .pagination a {
-            margin: 0 8px;
-            color: #5b7cfa;
-        }
-
-        canvas {
-            max-width: 100%;
-        }
-
-        .charts-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .chart-box {
-            flex: 1 1 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .chart-box h3 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .memory-actions form {
-                flex-direction: column;
-            }
-
-            .memory-actions input[type="text"],
-            .memory-actions button {
-                width: 100%;
-            }
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-    <a href="/dashboard">← Back to Users</a>
-    <h1>Memories for {{ user_id }}</h1>
-
-    <div class="memory-actions">
-        <form method="post" action="/add-memory/{{ user_id }}">
-            <input type="text" name="memory_text" placeholder="Write a new memory..." required>
-            <button type="submit">Add Memory</button>
+    <!-- Add Memory Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Add New Memory</h5>
+            <form method="POST" action="{{ url_for('add_memory', user_id=user_id) }}">
+                <div class="form-group">
+                    <textarea class="form-control" name="memory_text" rows="3" placeholder="Enter memory text..." required></textarea>
+        </div>
+                <button type="submit" class="btn btn-primary mt-2">Add Memory</button>
         </form>
     </div>
-
-    {% for memory in memories %}
-    <div class="memory-card">
-        <p>{{ memory.text }}</p>
-        <div class="metadata">
-            {% if memory.metadata.mood %}
-                <span>🧠 Mood: {{ memory.metadata.mood }}</span>
-            {% endif %}
-            {% if memory.metadata.location %}
-                <span>📍 Location: {{ memory.metadata.location }}</span>
-            {% endif %}
-            {% if memory.metadata.timestamp %}
-                <span>📅 Date: {{ memory.metadata.timestamp }}</span>
-            {% endif %}
-        </div>
-        <form method="post" action="/delete-memory/{{ memory.id }}">
-            <button type="submit">Delete</button>
-        </form>
-    </div>
-    {% endfor %}
-
-    <div class="pagination">
-        {% if pagination.has_prev %}
-            <a href="?page={{ pagination.current_page - 1 }}">← Previous</a>
-        {% endif %}
-        <span>Page {{ pagination.current_page }} of {{ pagination.total_pages }}</span>
-        {% if pagination.has_next %}
-            <a href="?page={{ pagination.current_page + 1 }}">Next →</a>
-        {% endif %}
     </div>
 
-    <!-- Charts -->
-    <div class="charts-container">
-        <div class="chart-box">
-            <h3>Mood Distribution</h3>
-            <canvas id="moodChart"></canvas>
+    <!-- Memories List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Memories</h5>
         </div>
-        <div class="chart-box">
-            <h3>Memory Count Over Time</h3>
-            <canvas id="dateChart"></canvas>
+        <div class="card-body">
+            {% if memories %}
+                <div class="list-group">
+                    {% for memory in memories %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Memory {{ memory.id }}</h5>
+                                <small>{{ memory.created }}</small>
+                            </div>
+                            <p class="mb-1">{{ memory.text }}</p>
+                            {% if memory.metadata %}
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <strong>Mood:</strong> {{ memory.metadata.mood or 'N/A' }} |
+                                        <strong>Location:</strong> {{ memory.metadata.location or 'N/A' }} |
+                                        <strong>Date:</strong> {{ memory.metadata.timestamp or 'N/A' }}
+                                    </small>
+                                </div>
+                            {% endif %}
+                            <div class="mt-2">
+                                <a href="{{ url_for('memory_details', memory_id=memory.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_memory', memory_id=memory.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this memory?')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No memories found for this user.
         </div>
-        <div class="chart-box">
-            <h3>Location Distribution</h3>
-            <canvas id="locationChart"></canvas>
+            {% endif %}
         </div>
     </div>
 
-    <script>
-        const moodCounts = {{ chart_data['mood_counts'] | tojson }};
-        const locationCounts = {{ chart_data['location_counts'] | tojson }};
-        const dateCounts = {{ chart_data['date_counts'] | tojson }};
-
-        const renderChart = (id, labels, data, type, label) => {
-            const ctx = document.getElementById(id).getContext('2d');
-            new Chart(ctx, {
-                type: type,
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: label,
-                        data: data,
-                        backgroundColor: [
-                            '#4e79a7','#f28e2c','#e15759','#76b7b2',
-                            '#59a14f','#edc949','#af7aa1','#ff9da7'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { display: false }
-                    }
-                }
-            });
-        };
-
-        renderChart('moodChart', Object.keys(moodCounts), Object.values(moodCounts), 'pie', 'Mood Distribution');
-        renderChart('dateChart', Object.keys(dateCounts), Object.values(dateCounts), 'line', 'Memories per Day');
-        renderChart('locationChart', Object.keys(locationCounts), Object.values(locationCounts), 'bar', 'Locations Mentioned');
-    </script>
-</body>
-</html>
+    <!-- Pagination -->
+    {% if pagination.total_pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('user_memories', user_id=user_id, page=pagination.current_page-1) }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for page in range(1, pagination.total_pages + 1) %}
+                    <li class="page-item {% if page == pagination.current_page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('user_memories', user_id=user_id, page=page) }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('user_memories', user_id=user_id, page=pagination.current_page+1) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

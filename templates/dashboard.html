@@ -1,77 +1,109 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            padding: 40px;
-        }
-        h1 {
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background-color: #4f46e5;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-        a, button {
-            background: #10b981;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            cursor: pointer;
-            margin-right: 6px;
-        }
-        button {
-            background: #ef4444;
-        }
-        button:hover, a:hover {
-            opacity: 0.9;
-        }
-        form {
-            display: inline;
-        }
-    </style>
-</head>
-<body>
-    <h1>Mem0 Users</h1>
-    <table>
-        <tr>
-            <th>User ID</th>
-            <th>Memory Count</th>
-            <th>Actions</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.memory_count }}</td>
-            <td>
-                <a href="/user/{{ user.id }}">View</a>
-                <form method="post" action="/delete-user/{{ user.id }}">
-                    <button type="submit">Delete All</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    
+    <!-- Stats Cards -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-4">{{ stats.total_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Agents</h5>
+                    <p class="card-text display-4">{{ stats.total_agents }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Memories</h5>
+                    <p class="card-text display-4">{{ stats.memory_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Advanced Search</h5>
+                    <p class="card-text">Search memories with advanced filters and metadata.</p>
+                    <a href="{{ url_for('search_memories') }}" class="btn btn-primary">Search Memories</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Batch Operations</h5>
+                    <p class="card-text">Perform bulk updates or deletions on multiple memories.</p>
+                    <a href="{{ url_for('batch_operations') }}" class="btn btn-primary">Manage Batch Operations</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Users and Agents</h5>
+            <div>
+                <a href="{{ url_for('search_memories') }}" class="btn btn-sm btn-outline-primary me-2">
+                    <i class="fas fa-search"></i> Search
+                </a>
+                <a href="{{ url_for('batch_operations') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-tasks"></i> Batch Operations
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Memory Count</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.type }}</td>
+                            <td>{{ user.memory_count }}</td>
+                            <td>{{ user.created }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('user_memories', user_id=user.id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

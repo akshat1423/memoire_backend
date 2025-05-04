@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Memory Details</h2>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Current Memory</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>ID:</strong> {{ memory.id }}
+            </div>
+            <div class="mb-3">
+                <strong>Created At:</strong> {{ memory.created_at }}
+            </div>
+            <div class="mb-3">
+                <strong>Text:</strong>
+                <p>{{ memory.text }}</p>
+            </div>
+            {% if memory.metadata %}
+                <div class="mb-3">
+                    <strong>Metadata:</strong>
+                    <pre>{{ memory.metadata | tojson(indent=2) }}</pre>
+                </div>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('update_memory', memory_id=memory.id) }}" class="mt-4">
+                <div class="form-group">
+                    <label for="new_text">Update Memory Text</label>
+                    <textarea class="form-control" id="new_text" name="new_text" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Update Memory</button>
+            </form>
+        </div>
+    </div>
+
+    {% if history %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Memory History</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for entry in history %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Version {{ entry.version }}</h6>
+                                <small>{{ entry.updated_at }}</small>
+                            </div>
+                            <p class="mb-1">{{ entry.text }}</p>
+                            {% if entry.metadata %}
+                                <small class="text-muted">
+                                    Metadata: {{ entry.metadata }}
+                                </small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %} 

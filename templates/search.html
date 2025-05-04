@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Advanced Memory Search</h2>
+    <form method="POST" action="{{ url_for('search_memories') }}" class="mt-4">
+        <div class="form-group">
+            <label for="query">Search Query</label>
+            <input type="text" class="form-control" id="query" name="query" required>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="user_id">User ID</label>
+                    <input type="text" class="form-control" id="user_id" name="user_id">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="agent_id">Agent ID</label>
+                    <input type="text" class="form-control" id="agent_id" name="agent_id">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="categories">Categories (comma-separated)</label>
+                    <input type="text" class="form-control" id="categories" name="categories">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="metadata">Metadata (JSON format)</label>
+                    <input type="text" class="form-control" id="metadata" name="metadata">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date">End Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Search</button>
+    </form>
+</div>
+{% endblock %} 

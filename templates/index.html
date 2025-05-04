@@ -1,48 +1,87 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f5f7fa;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-        form {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-        input[type="password"] {
-            padding: 12px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-        button {
-            background: #4f46e5;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #4338ca;
-        }
-    </style>
-</head>
-<body>
-    <form method="post">
-        <input type="password" name="api_key" placeholder="Enter Mem0 API Key" required>
-        <button type="submit">Load Dashboard</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg mt-5">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="card-title">Backend of Memoire</h2>
+                        <p class="text-muted">AI Memory Management Platform</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('index') }}">
+                        <div class="mb-4">
+                            <label for="api_key" class="form-label">Mem0 API Key</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-key"></i>
+                                </span>
+                                <input type="password" class="form-control" id="api_key" name="api_key" 
+                                       placeholder="Enter your Mem0 API key" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                <a href="https://mem0.ai" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-external-link-alt"></i> Get your API key from Mem0 Platform
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-search fa-2x text-primary mb-3"></i>
+                        <h5>Advanced Search</h5>
+                        <p class="text-muted small">Search memories with powerful filters and metadata</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-tasks fa-2x text-primary mb-3"></i>
+                        <h5>Batch Operations</h5>
+                        <p class="text-muted small">Manage multiple memories efficiently</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-history fa-2x text-primary mb-3"></i>
+                        <h5>Memory History</h5>
+                        <p class="text-muted small">Track changes and view memory evolution</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('api_key');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+</script>
+{% endblock %}

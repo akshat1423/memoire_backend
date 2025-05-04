@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Results for "{{ query }}"</h2>
+    
+    {% if results %}
+        <div class="list-group mt-4">
+            {% for result in results %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Memory ID: {{ result.id }}</h5>
+                        <small>{{ result.created_at }}</small>
+                    </div>
+                    <p class="mb-1">{{ result.text }}</p>
+                    {% if result.metadata %}
+                        <small class="text-muted">
+                            Metadata: {{ result.metadata }}
+                        </small>
+                    {% endif %}
+                    <div class="mt-2">
+                        <a href="{{ url_for('memory_details', memory_id=result.id) }}" class="btn btn-sm btn-info">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            No results found for your search query.
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ url_for('search_memories') }}" class="btn btn-secondary">New Search</a>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Batch Operations</h2>
+    
+    <form method="POST" action="{{ url_for('batch_operations') }}" class="mt-4">
+        <div class="form-group">
+            <label for="operation">Operation Type</label>
+            <select class="form-control" id="operation" name="operation" required>
+                <option value="update">Update Memories</option>
+                <option value="delete">Delete Memories</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="memory_ids">Memory IDs (comma-separated)</label>
+            <input type="text" class="form-control" id="memory_ids" name="memory_ids" required>
+        </div>
+
+        <div id="updateFields" class="mt-3">
+            <h4>Update Text for Each Memory</h4>
+            <div id="textInputs"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Execute Batch Operation</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('operation').addEventListener('change', function() {
+    const updateFields = document.getElementById('updateFields');
+    if (this.value === 'update') {
+        updateFields.style.display = 'block';
+    } else {
+        updateFields.style.display = 'none';
+    }
+});
+
+document.getElementById('memory_ids').addEventListener('input', function() {
+    const memoryIds = this.value.split(',').map(id => id.trim());
+    const textInputs = document.getElementById('textInputs');
+    textInputs.innerHTML = '';
+    
+    memoryIds.forEach(id => {
+        if (id) {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            div.innerHTML = `
+                <label for="text_${id}">Text for Memory ${id}</label>
+                <textarea class="form-control" id="text_${id}" name="text_${id}" rows="3"></textarea>
+            `;
+            textInputs.appendChild(div);
+        }
+    });
+});
+</script>
+{% endblock %} 
